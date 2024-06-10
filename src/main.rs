@@ -32,6 +32,7 @@ use counter::*;
 use evset::*;
 use kernel_rw::*;
 use iokit::*;
+use std::ptr::addr_of;
 use std::thread;
 use core::ptr::{read_volatile, write_volatile};
 use core::arch::asm;
@@ -160,7 +161,7 @@ pub fn main() {
 
         // Create counter thread and sync up with it
         thread::spawn(|| counter_thread());
-        while 0 == read_volatile(&CTR) {}
+        while 0 == read_volatile(addr_of!(CTR)) {}
 
         // Report platform info before shared_mem is initialized
         report_platform_info(shared_mem);

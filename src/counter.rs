@@ -6,6 +6,7 @@
  */
 
 use crate::*;
+use std::ptr::{ addr_of_mut, addr_of };
 
 /**
  * A globally visible counter that can be sampled to get a rough measurement of how far time has passed.
@@ -30,7 +31,7 @@ pub unsafe fn counter_thread() {
             "str x0, [{cnt_addr}]",
             "add x0, x0, 1",
             "b 1b",
-            cnt_addr = in(reg) &mut counter::CTR as *mut u64 as u64,
+            cnt_addr = in(reg) addr_of_mut!(counter::CTR) as *mut u64 as u64,
         }
     }
 }
@@ -46,7 +47,7 @@ pub unsafe fn read_counter() -> u64 {
     asm!{
         "isb"
     }
-    let retval = read_volatile(&CTR);
+    let retval = read_volatile(addr_of!(CTR));
     asm!{
         "isb"
     }

@@ -2,6 +2,8 @@
  * Test code to manually create eviction sets and confirm data/ instruction contention is visible.
  */
 
+use std::ptr::addr_of;
+
 use crate::*;
 
 /**
@@ -10,11 +12,11 @@ use crate::*;
 pub unsafe fn test_timers(shared_mem: &mut [u8]) {
     let mut x = 0;
     let t1_mach = gettime();
-    let t1 = read_volatile(&CTR);
+    let t1 = read_volatile(addr_of!(CTR));
     for i in 0..1000 {
         x = i / 2 + x;
     }
-    let t2 = read_volatile(&CTR);
+    let t2 = read_volatile(addr_of!(CTR));
     let t2_mach = gettime();
     println!("Time difference (thread): {}", t2 - t1);
     println!("Time difference (mach): {}", t2_mach - t1_mach);
